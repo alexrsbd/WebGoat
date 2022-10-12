@@ -2,10 +2,10 @@ name: Black Duck Rapid Scan
 
 # Run Rapid Scan on all pull requests and pushes to a main branch
 on:
-  pull_request:
-    branches:
-      - master
-  push:
+  #pull_request:
+  #  branches:
+  #    - master
+  #push:
   
   #workflow_dispatch:
 
