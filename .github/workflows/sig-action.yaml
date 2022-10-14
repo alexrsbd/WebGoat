@@ -28,7 +28,7 @@ jobs:
         with:
           synopsys_bridge_path: /tmp/synopsys-bridge
           bridge_download_url: ${{ env.LINUX_BRIDGE_URL }}
-
+          blackduck_install_directory: /tmp/synopsys-bridge/blackduck/8.0.0
           blackduck_url: ${{ secrets.BLACKDUCK_URL }}
           blackduck_apiToken: ${{ secrets.BLACKDUCK_API_KEY }}
           coverity_url: ${{ secrets.COVERITY_URL }}
