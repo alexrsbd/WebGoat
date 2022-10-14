@@ -31,6 +31,8 @@ jobs:
           blackduck_install_directory: /tmp/synopsys-bridge/blackduck/8.0.0
           blackduck_url: ${{ secrets.BLACKDUCK_URL }}
           blackduck_apiToken: ${{ secrets.BLACKDUCK_API_KEY }}
+          blackduck_scan_full: false
+          blackduck_scan_failure_severities: "['ALL']"
           coverity_url: ${{ secrets.COVERITY_URL }}
           coverity_user: ${{ secrets.COVERITY_USER }}
           coverity_passphrase: ${{ secrets.COVERITY_PASSPHRASE }}
