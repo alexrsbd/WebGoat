@@ -34,7 +34,6 @@ jobs:
           blackduck_scan_full: true
           blackduck_automation_fixpr: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          NODE_TLS_REJECT_UNAUTHORIZED: 0
           #blackduck_scan_failure_severities: "['ALL']"
           #coverity_url: ${{ secrets.COVERITY_URL }}
           #coverity_user: ${{ secrets.COVERITY_USER }}
@@ -48,4 +47,5 @@ jobs:
           #polaris_assessment_types: '["SAST", "SCA"]'
         env:
           BLACKDUCK_TRUST_CERT: true
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
           LINUX_BRIDGE_URL: "https://sig-repo.synopsys.com/artifactory/bds-integrations-release/com/synopsys/integration/synopsys-action/0.1.192/ci-package-0.1.192-macosx.zip"
