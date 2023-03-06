@@ -25,8 +25,6 @@ jobs:
 
       - name: Synopsys Application Security Testing
         uses: synopsys-sig/synopsys-action@main
-        env:
-          BLACKDUCK_TRUST_CERT: true
         with:
           synopsys_bridge_path: /tmp/synopsys-bridge
           bridge_download_url: ${{ env.LINUX_BRIDGE_URL }}
@@ -46,4 +44,5 @@ jobs:
           #polaris_project_name: "SUGA-Testing-WebGoat"
           #polaris_assessment_types: '["SAST", "SCA"]'
         env:
+          BLACKDUCK_TRUST_CERT: true
           LINUX_BRIDGE_URL: "https://sig-repo.synopsys.com/artifactory/bds-integrations-release/com/synopsys/integration/synopsys-action/0.1.192/ci-package-0.1.192-macosx.zip"
