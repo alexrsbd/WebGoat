@@ -1,12 +1,10 @@
 name: "Release Pipeline"
 on:
-  push:
-    tags:
-      - v*
+#  push:
+
 jobs:
   release:
-    name: Release WebGoat
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     environment:
       name: release
     steps:
@@ -24,7 +22,7 @@ jobs:
           architecture: x64
 
       - name: Cache Maven packages
-        uses: actions/cache@v2.1.5
+        uses: actions/cache@v2.1.7
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -37,8 +35,8 @@ jobs:
           echo "WEBGOAT_MAVEN_VERSION=${WEBGOAT_MAVEN_VERSION:1}" >> $GITHUB_ENV
       - name: Build with Maven
         run: |
-          mvn versions:set -DnewVersion=${{ env.WEBGOAT_MAVEN_VERSION }}
-          mvn clean install -DskipTests
+          mvn --no-transfer-progress versions:set -DnewVersion=${{ env.WEBGOAT_MAVEN_VERSION }}
+          mvn --no-transfer-progress install -DskipTests
 
       - name: "Create release"
         uses: softprops/action-gh-release@v1
@@ -82,7 +80,7 @@ jobs:
         uses: docker/setup-buildx-action@v1
 
       - name: "Login to dockerhub"
-        uses: docker/login-action@v1.9.0
+        uses: docker/login-action@v1.12.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -93,41 +91,36 @@ jobs:
           context: ./docker
           file: docker/Dockerfile
           push: true 
-          platforms: linux/amd64, linux/arm64
+          platforms: linux/amd64, linux/arm64, linux/arm/v7
           tags: |
             webgoat/goatandwolf:${{ env.WEBGOAT_TAG_VERSION }}
             webgoat/goatandwolf:latest
           build-args: |
             webgoat_version=${{ env.WEBGOAT_MAVEN_VERSION }}
-
-      - name: "Image digest"
-        run: echo ${{ steps.docker_build.outputs.digest }}
-  new_version:
-    name: Update development version
-    needs: [ release ]
-    runs-on: ubuntu-latest
-    environment:
-      name: release
-    steps:
-      - uses: actions/checkout@v2.3.4
-        with:
-          ref: develop
-          token: ${{ secrets.WEBGOAT_DEPLOYER_TOKEN }}
-
+  
       - name: Set up JDK 15
         uses: actions/setup-java@v2
         with:
           java-version: 15
           architecture: x64
 
-      - name: Set version to next snapshot
-        run: |
-          mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT versions:commit
+      - name: Synopsys Application Security Testing
+        uses: synopsys-sig/synopsys-action@main
+        with:
+          synopsys_bridge_path: /tmp/synopsys-bridge
+          bridge_download_url: ${{ env.LINUX_BRIDGE_URL }}
 
-      - name: Commit pom.xml
-        run: |
-          git config user.name webgoat-github
-          git config user.email owasp.webgoat@gmail.com
-          find . -name 'pom.xml' | xargs git add
-          git commit -m "Updating to the new development version"
-          git push
+          blackduck_url: ${{ secrets.BLACKDUCK_URL }}
+          blackduck_apiToken: ${{ secrets.BLACKDUCK_API_KEY }}
+          coverity_url: ${{ secrets.COVERITY_URL }}
+          coverity_user: ${{ secrets.COVERITY_USER }}
+          coverity_passphrase: ${{ secrets.COVERITY_PASSPHRASE }}
+          coverity_project_name: ${{ github.event.repository.name }}
+          coverity_stream_name: ${{ github.event.repository.name }}
+          polaris_serverUrl: ${{ secrets.POLARIS_SERVER_URL }}
+          polaris_accessToken: ${{ secrets.POLARIS_ACCESS_TOKEN }}
+          polaris_application_name: "SUGA-Testing-WebGoat"
+          polaris_project_name: "SUGA-Testing-WebGoat"
+          polaris_assessment_types: '["SAST", "SCA"]'
+        env:
+          LINUX_BRIDGE_URL: "https://sig-repo.synopsys.com/artifactory/bds-integrations-release/com/synopsys/integration/synopsys-action/0.1.61/ci-package-0.1.61-linux64.zip"
