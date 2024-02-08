@@ -48,4 +48,4 @@ jobs:
         env:
           BLACKDUCK_TRUST_CERT: true
           NODE_TLS_REJECT_UNAUTHORIZED: 0
-          LINUX_BRIDGE_URL: "https://artifactory.internal.synopsys.com/artifactory/clops-local/clops.sig.synopsys.com/synopsys-bridge/0.1.225/synopsys-bridge-0.1.225-macosx.zip"
+          LINUX_BRIDGE_URL: "https://artifactory.internal.synopsys.com/artifactory/clops-local/clops.sig.synopsys.com/synopsys-bridge/latest/synopsys-bridge-macos_arm.zip"
